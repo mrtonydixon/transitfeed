@@ -149,6 +149,10 @@ class Stop(GtfsObjectBase):
   def ValidateStopLatitude(self, problems):
     if self.stop_lat is not None:
       value = self.stop_lat
+      
+      if value == '' and self.location_type in [3, 4]: # empty value is allowed for nodes and boarding areas
+        return
+
       try:
         if not isinstance(value, (float, int)):
           self.stop_lat = util.FloatStringToFloat(value, problems)
@@ -162,6 +166,10 @@ class Stop(GtfsObjectBase):
   def ValidateStopLongitude(self, problems):
     if self.stop_lon is not None:
       value = self.stop_lon
+
+      if value == '' and self.location_type in [3, 4]: # empty value is allowed for nodes and boarding areas
+        return
+
       try:
         if not isinstance(value, (float, int)):
           self.stop_lon = util.FloatStringToFloat(value, problems)
@@ -247,10 +255,12 @@ class Stop(GtfsObjectBase):
     #If value is valid for attribute name store it.
     #If value is not valid call problems. Return a new value of the correct type
     #or None if value couldn't be converted.
+    self.ValidateStopLocationType(problems) # check first to confirm location type
+
     self.ValidateStopLatitude(problems)
     self.ValidateStopLongitude(problems)
     self.ValidateStopUrl(problems)
-    self.ValidateStopLocationType(problems)
+    
     self.ValidateStopTimezone(problems)
     self.ValidateWheelchairBoarding(problems)
 

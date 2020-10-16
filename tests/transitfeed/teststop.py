@@ -101,6 +101,30 @@ class StopHierarchyTestCase(util.MemoryZipTestCase):
     e = self.accumulator.PopException("InvalidValue")
     self.assertEquals("parent_station", e.column_name)
     self.accumulator.AssertNoMoreExceptions()
+  
+  def testParentNodeIsStop(self):
+    self.SetArchiveContents(
+        "stops.txt",
+        "stop_id,stop_name,stop_lat,stop_lon,location_type,parent_station\n"
+        "BEATTY_AIRPORT,Airport,36.868446,-116.784582,3,BULLFROG\n"
+        "BULLFROG,Bullfrog,36.88108,-116.81797,,\n"
+        "STAGECOACH,Stagecoach Hotel,36.915682,-116.751677,,\n")
+    schedule = self.MakeLoaderAndLoad()
+    e = self.accumulator.PopException("InvalidValue")
+    self.assertEquals("parent_station", e.column_name)
+    self.accumulator.AssertNoMoreExceptions()
+
+  def testParentBoardingAreaIsStation(self):
+    self.SetArchiveContents(
+        "stops.txt",
+        "stop_id,stop_name,stop_lat,stop_lon,location_type,parent_station\n"
+        "BEATTY_AIRPORT,Airport,36.868446,-116.784582,4,BULLFROG_STATION\n"
+        "BULLFROG_STATION,Bullfrog,36.88108,-116.81797,1,\n"
+        "STAGECOACH,Stagecoach Hotel,36.915682,-116.751677,,\n")
+    schedule = self.MakeLoaderAndLoad()
+    e = self.accumulator.PopException("InvalidValue")
+    self.assertEquals("parent_station", e.column_name)
+    self.accumulator.AssertNoMoreExceptions()
 
   def testParentOfEntranceIsStop(self):
     self.SetArchiveContents(

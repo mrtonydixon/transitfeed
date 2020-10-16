@@ -1001,11 +1001,19 @@ class Schedule(object):
                                 "'%s' in stops.txt" %
                                 (util.EncodeUnicode(stop.parent_station),
                                  util.EncodeUnicode(stop.stop_id)))
-        elif self.stops[stop.parent_station].location_type != 1:
+        elif stop.location_type in [0, 2, 3] and self.stops[stop.parent_station].location_type != 1:
           problems.InvalidValue("parent_station",
                                 util.EncodeUnicode(stop.parent_station),
-                                "parent_station '%s' of stop_id '%s' must "
+                                "parent_station '%s' of stop_id '%s' type '%s' must "
                                 "have location_type=1 in stops.txt" %
+                                (util.EncodeUnicode(stop.parent_station),
+                                 util.EncodeUnicode(stop.stop_id),
+                                 util.EncodeUnicode(stop.location_type)))
+        elif stop.location_type == 4 and self.stops[stop.parent_station].location_type != 0:
+          problems.InvalidValue("parent_station",
+                                util.EncodeUnicode(stop.parent_station),
+                                "parent_station '%s' of stop_id '%s' type '4' must "
+                                "have location_type=0 in stops.txt" %
                                 (util.EncodeUnicode(stop.parent_station),
                                  util.EncodeUnicode(stop.stop_id)))
         else:
